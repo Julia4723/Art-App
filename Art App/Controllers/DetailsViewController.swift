@@ -29,7 +29,6 @@ final class DetailsViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        
         contentView.addSubview(tableView)
         tableView.dataSource = self
         tableView.delegate = self
@@ -42,7 +41,7 @@ final class DetailsViewController: UIViewController {
         }
     }
     
-    init(artist: Artist? = nil) {
+    init(artist: Artist?) {
         self.artistModel = artist
         super.init(nibName: nil, bundle: nil)
     }
@@ -75,6 +74,13 @@ extension DetailsViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let item = artistModel?.works[indexPath.row] else {return}
+        let imageVC = ImageDetailsController(workModel: item)
+        navigationController?.pushViewController(imageVC, animated: true)
+    
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         280
     }
@@ -98,8 +104,7 @@ private extension DetailsViewController {
     }
     
     func setupImageView() {
-        imageView.widthAnchor.constraint(equalToConstant: 300).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 180).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 300).isActive = true
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 12
         imageView.contentMode = .scaleAspectFill
@@ -113,7 +118,7 @@ private extension DetailsViewController {
         }
         
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -127,9 +132,9 @@ private extension DetailsViewController {
         ])
         
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
             nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20),
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),

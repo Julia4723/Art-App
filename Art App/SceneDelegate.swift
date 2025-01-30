@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let dataManager: IDataManager = DataManager()
        
-        window?.rootViewController = MainViewController(dataManager: dataManager)
+        window?.rootViewController = UINavigationController(rootViewController: MainViewController(dataManager: dataManager))
         window?.makeKeyAndVisible()
     }
 

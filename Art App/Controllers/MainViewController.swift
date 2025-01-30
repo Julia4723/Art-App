@@ -89,7 +89,7 @@ private extension MainViewController {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         
-        appearance.backgroundColor = .clear
+        appearance.backgroundColor = .white
         
         // Настраиваем текст заголовка для компактного вида
         appearance.titleTextAttributes = [
