@@ -1,14 +1,15 @@
 //
-//  CustomCell.swift
+//  CustomDetailsCell.swift
 //  Art App
 //
-//  Created by user on 27.01.2025.
+//  Created by user on 28.01.2025.
 //
 
 import UIKit
 
-final class CustomCell: UITableViewCell {
-    private let customView = CustomView()
+final class CustomDetailsCell: UITableViewCell {
+    
+    private let customView = CustomDetailsView()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -19,22 +20,22 @@ final class CustomCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(model: Artist) {
+    func configure(model: Work) {
         customView.configure(model: model)
     }
 }
 
 
-private extension CustomCell {
+private extension CustomDetailsCell {
     func setup() {
         contentView.addSubview(customView)
-        contentView.backgroundColor = .systemGray6
+        contentView.backgroundColor = .white
         setupLayout()
     }
 }
 
 
-private extension CustomCell {
+private extension CustomDetailsCell {
     func setupLayout() {
         customView.translatesAutoresizingMaskIntoConstraints = false
         
