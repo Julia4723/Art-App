@@ -9,12 +9,24 @@ import UIKit
 
 final class MainViewController: UITableViewController {
     
+    //MARK: - Private Property
     private let cellIdentifier = "cell"
     private let networkManager = NetworkManager.shared
     private let dataManager: IDataManager
-    
     private var artistModel: [Artist]?
     
+    private let searchController = UISearchController(searchResultsController: nil)
+    private var filteredArtist: [Artist] = []
+    private var searchBarIsEmpty: Bool {
+        guard let text = searchController.searchBar.text else { return false}
+        return text.isEmpty
+    }
+    
+    private var isFiltering: Bool {
+        return searchController.isActive && !searchBarIsEmpty
+    }
+    
+    //MARK: - Init
     init(dataManager: IDataManager) {
         self.dataManager = dataManager
         super.init(nibName: nil, bundle: nil)
@@ -24,6 +36,7 @@ final class MainViewController: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -35,6 +48,7 @@ final class MainViewController: UITableViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
+    //MARK: - Methods
     func fetchArtist() {
         networkManager.fetchAF { [weak self] result in
             DispatchQueue.main.async {
@@ -51,15 +65,19 @@ final class MainViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        artistModel?.count ?? 0
+        isFiltering ? filteredArtist.count : artistModel?.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? CustomCell else { return UITableViewCell()}
         
-        if let item = artistModel?[indexPath.row] {
-            cell.configure(model: item)
+        if let artist = isFiltering ? filteredArtist[indexPath.row] : artistModel?[indexPath.row] {
+            cell.configure(model: artist)
         }
+        
+        //        if let item = artistModel?[indexPath.row] {
+        //            cell.configure(model: item)
+        //        }
         return cell
     }
     
@@ -67,9 +85,7 @@ final class MainViewController: UITableViewController {
         guard let item = artistModel?[indexPath.row] else { return }
         let detailsVC = DetailsViewController(artist: item)
         navigationController?.pushViewController(detailsVC, animated: true)
-        
     }
-    
 }
 
 
@@ -78,6 +94,7 @@ private extension MainViewController {
         tableView.separatorStyle = .none
         tableView.register(CustomCell.self, forCellReuseIdentifier: cellIdentifier)
         setupNavigationBar()
+        setupSearchController()
     }
     
     func setupNavigationBar() {
@@ -108,5 +125,33 @@ private extension MainViewController {
         navigationController?.navigationBar.scrollEdgeAppearance = appearance // к навбару когда скролл
     }
     
+    func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search"
+        searchController.searchBar.barTintColor = .white
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
+        
+        if let textField = searchController.searchBar.value(forKey: "searchField") as? UITextField {
+            textField.font = UIFont.boldSystemFont(ofSize: 17)
+            textField.textColor = .black
+        }
+    }
+    
 }
 
+//MARK: - UISearchResultsUpdating
+extension MainViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        filterContentForSearchText(searchController.searchBar.text ?? "")
+    }
+    
+    private func filterContentForSearchText(_ searchText: String) {
+        filteredArtist = artistModel?.filter { artist in
+            artist.name.lowercased().contains(searchText.lowercased())
+        } ?? []
+        
+        tableView.reloadData()
+    }
+}

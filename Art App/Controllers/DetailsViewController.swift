@@ -70,7 +70,6 @@ extension DetailsViewController: UITableViewDataSource, UITableViewDelegate {
         if let modelElement = artistModel?.works[indexPath.row] {
             cell.configure(model: modelElement)
         }
-        
         return cell
     }
     
@@ -78,7 +77,6 @@ extension DetailsViewController: UITableViewDataSource, UITableViewDelegate {
         guard let item = artistModel?.works[indexPath.row] else {return}
         let imageVC = ImageDetailsController(workModel: item)
         navigationController?.pushViewController(imageVC, animated: true)
-    
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

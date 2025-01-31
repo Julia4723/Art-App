@@ -30,7 +30,11 @@ final class ImageDetailsController: UIViewController {
         if let work = workModel {
             configure(model: work)
         }
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = false
     }
     
     init(workModel: Work?) {
@@ -40,6 +44,14 @@ final class ImageDetailsController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc func buttonTapped() {
+        print("Button")
+        let image = workModel?.image
+        let imageVC = ImageController(workModel: workModel!)
+        imageVC.imageV = image ?? ""
+        navigationController?.pushViewController(imageVC, animated: true)
     }
     
     func configure(model: Work) {
@@ -75,6 +87,7 @@ private extension ImageDetailsController {
         button.layer.cornerRadius = 12
         button.tintColor = .white
         button.backgroundColor = .black
+        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
 }
 
@@ -85,7 +98,6 @@ private extension ImageDetailsController {
         }
         
         NSLayoutConstraint.activate([
-            
             imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
